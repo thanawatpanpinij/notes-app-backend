@@ -1,9 +1,9 @@
 import authService from "../../services/auth.service.js";
 
 async function createAccount(request, response, next) {
-  const { fullName, email, password, role } = request.body;
+  const { fullName, email, password, role = "user" } = request.body;
 
-  if (!fullName || !email || !password || !role) {
+  if (!fullName || !email || !password) {
     return response.status(400).json({
       success: false,
       message: "All fields are required.",
@@ -20,7 +20,11 @@ async function createAccount(request, response, next) {
     response.status(201).json({
       success: true,
       message: "User registered succesfully!",
-      user,
+      user: {
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     const customError = new Error("Server Error");

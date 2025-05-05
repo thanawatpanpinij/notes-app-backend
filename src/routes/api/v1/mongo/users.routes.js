@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { createUser, getAllUsers } from "../../../../controllers/mongo/users.controller.js";
+import { deleteUser, getAllUsers } from "../../../../controllers/mongo/users.controller.js";
+import authUser from "../../../../middlewares/auth.middleware.js";
 
 const router = Router();
 
 // get all users
-router.get("/", getAllUsers);
+router.get("/", authUser, getAllUsers);
 
-// create a user
-router.post("/", createUser);
+router.delete("/:userId", authUser, deleteUser);
 
 export default router;

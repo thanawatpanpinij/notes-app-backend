@@ -2,10 +2,21 @@ import express from "express";
 import apiRouter from "./routes/index.js";
 import { database } from "./config/database.js";
 import errorHandling from "./middlewares/error.middleware.js";
+import helmet from "helmet";
+import limiter from "./middlewares/rateLimiter.middleware.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
+app.use(helmet());
+const corsOptions = {
+  origin: ["http://localhost:5173"],
+  credentials: true,
+};
+app.use(cors(corsOptions));
+app.use(limiter);
 app.use(express.json());
+app.use(cookieParser());
 
 app.get("/", (request, response) => {
   response.end(

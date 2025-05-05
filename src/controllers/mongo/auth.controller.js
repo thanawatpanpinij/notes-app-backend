@@ -59,10 +59,26 @@ async function login(request, response, next) {
     }
 
     const token = authService.signToken({ userId: user._id, role: user.role });
+
+    const isProduction = process.env.NODE_ENV === "production";
+
+    response.cookie("accessToken", token, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      path: "/",
+      maxAge: 60 * 60 * 1000, // 1 hour
+    });
+
     response.json({
       success: true,
       message: "Login successful!",
-      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        fullName: user.fullName,
+      },
     });
   } catch (error) {
     const customError = new Error("Server Error");

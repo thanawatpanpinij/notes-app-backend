@@ -1,81 +1,11 @@
 import { Router } from "express";
-import { User } from "../../../../models/User.model.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { createAccount, login } from "../../../../controllers/mongo/auth.controller.js";
 
 const router = Router();
 
 // Register a new user
-router.post("/register", async (request, response) => {
-  const { fullName, email, password } = request.body;
+router.post("/register", createAccount);
 
-  if (!fullName || !email || !password) {
-    return response.status(400).json({
-      isError: true,
-      message: "All fields are required.",
-    });
-  }
-
-  try {
-    const isExistingUser = await User.findOne({ email });
-    if (isExistingUser) {
-      return response.status(409).json({ error: true, message: "Email already in use." });
-    }
-
-    const user = new User({ fullName, email, password });
-    await user.save();
-  } catch (error) {
-    response.status(500).json({
-      isErrorrror: true,
-      message: "Server Error",
-      details: error.message,
-    });
-  }
-  response.status(201).json({
-    isError: false,
-    message: "User registered succesfully!",
-  });
-});
-
-router.post("/login", async (request, response) => {
-  const { email, password } = request.body;
-  if (!email || !password) {
-    return response.status(400).json({
-      isError: true,
-      message: "Email and password are required.",
-    });
-  }
-
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return response.status(401).json({
-        isError: true,
-        message: "Invalid credentials",
-      });
-    }
-
-    const isMatched = bcrypt.compare(password, user.password);
-    if (!isMatched) {
-      return response.status(401).json({
-        isError: true,
-        message: "Invalid password",
-      });
-    }
-
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    response.json({
-      isError: false,
-      token,
-      message: "Login successful!",
-    });
-  } catch (error) {
-    response.status(500).json({
-      isError: true,
-      message: "Server error",
-      details: error.message,
-    });
-  }
-});
+router.post("/login", login);
 
 export default router;

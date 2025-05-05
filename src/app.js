@@ -3,6 +3,7 @@ import apiRouter from "./routes/index.js";
 import { database } from "./config/database.js";
 import errorHandling from "./middlewares/error.middleware.js";
 import helmet from "helmet";
+import cors from "cors";
 import limiter from "./middlewares/rateLimiter.middleware.js";
 import cookieParser from "cookie-parser";
 

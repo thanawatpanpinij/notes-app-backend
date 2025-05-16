@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 export default async function authUser(request, response, next) {
-  const token = request.headers.authorization?.split(" ")[1];
+  const token = request.cookies?.accessToken;
   if (!token) {
     return response.status(403).json({
       success: false,

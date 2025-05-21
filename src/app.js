@@ -13,7 +13,7 @@ app.set("trust proxy", 1);
 
 app.use(helmet());
 const corsOptions = {
-  origin: ["http://localhost:5173", "https://notura-app-frontend.vercel.app/"],
+  origin: ["http://localhost:5173", "https://notura-app-frontend.vercel.app"],
   credentials: true,
 };
 app.use(cors(corsOptions));

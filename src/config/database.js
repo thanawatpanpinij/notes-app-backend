@@ -1,5 +1,7 @@
 import { createClient } from "@libsql/client";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
 
 const database = createClient({
   url: process.env.TURSO_DB_URL,

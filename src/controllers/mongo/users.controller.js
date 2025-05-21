@@ -1,8 +1,31 @@
 import mongoose from "mongoose";
 import userService from "../../services/user.service.js";
 
+async function getCurrentUser(request, response, next) {
+  try {
+    const { _id } = request.user;
+    const user = await userService.findUserById(_id);
+    if (!user) {
+      return response
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+    response.json({
+      success: true,
+      message: "Retrived current user successfully",
+      user,
+    });
+  } catch (error) {
+    const customError = new Error("Server Error");
+    customError.status = 500;
+    customError.success = false;
+    customError.details = error.message;
+    next(customError);
+  }
+}
+
 async function getAllUsers(request, response, next) {
-  const { user } = request.user;
+  const user = request.user;
 
   if (user.role !== "admin") {
     return response
@@ -23,7 +46,7 @@ async function getAllUsers(request, response, next) {
 }
 
 async function deleteUser(request, response, next) {
-  const { user } = request.user;
+  const user = request.user;
   const { userId } = request.params;
 
   if (user.role !== "admin") {
@@ -58,4 +81,4 @@ async function deleteUser(request, response, next) {
   }
 }
 
-export { getAllUsers, deleteUser };
+export { getCurrentUser, getAllUsers, deleteUser };

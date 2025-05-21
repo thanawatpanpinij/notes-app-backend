@@ -1,8 +1,14 @@
 import { Router } from "express";
-import { deleteUser, getAllUsers } from "../../../../controllers/mongo/users.controller.js";
+import {
+  deleteUser,
+  getAllUsers,
+  getCurrentUser,
+} from "../../../../controllers/mongo/users.controller.js";
 import authUser from "../../../../middlewares/auth.middleware.js";
 
 const router = Router();
+
+router.get("/me", authUser, getCurrentUser);
 
 // get all users
 router.get("/", authUser, getAllUsers);

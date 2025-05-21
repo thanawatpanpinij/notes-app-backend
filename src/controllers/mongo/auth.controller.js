@@ -27,7 +27,11 @@ async function createAccount(request, response, next) {
     response.status(201).json({
       success: true,
       message: "User registered succesfully!",
-      user,
+      user: {
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     const customError = new Error("Server Error");

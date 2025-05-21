@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { createAccount, login } from "../../../../controllers/mongo/auth.controller.js";
+import {
+  createAccount,
+  login,
+  logout,
+} from "../../../../controllers/mongo/auth.controller.js";
 
 const router = Router();
 
@@ -7,5 +11,7 @@ const router = Router();
 router.post("/register", createAccount);
 
 router.post("/login", login);
+
+router.post("/logout", logout);
 
 export default router;

@@ -13,10 +13,17 @@ async function createAccount(request, response, next) {
   try {
     const isExistingUser = await authService.findUserEmail({ email });
     if (isExistingUser) {
-      return response.status(409).json({ success: false, message: "Email already in use." });
+      return response
+        .status(409)
+        .json({ success: false, message: "Email already in use." });
     }
 
-    const user = await authService.createUser({ fullName, email, password, role });
+    const user = await authService.createUser({
+      fullName,
+      email,
+      password,
+      role,
+    });
     response.status(201).json({
       success: true,
       message: "User registered succesfully!",
@@ -36,16 +43,15 @@ async function createAccount(request, response, next) {
 }
 
 async function login(request, response, next) {
-  const { email, password } = request.body;
-
-  if (!email || !password) {
-    return response.status(400).json({
-      success: false,
-      message: "Email and password are required.",
-    });
-  }
-
   try {
+    const { email, password } = request.body;
+
+    if (!email || !password) {
+      return response.status(400).json({
+        success: false,
+        message: "Email and password are required.",
+      });
+    }
     const user = await authService.findUserEmail({ email });
     if (!user) {
       return response.status(401).json({
@@ -63,26 +69,18 @@ async function login(request, response, next) {
     }
 
     const token = authService.signToken({ userId: user._id, role: user.role });
-
-    const isProduction = process.env.NODE_ENV === "production";
+    const isProd = process.env.NODE_ENV === "production";
 
     response.cookie("accessToken", token, {
       httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
+      secure: isProd,
+      samesite: isProd ? "none" : "lax",
       path: "/",
-      maxAge: 60 * 60 * 1000, // 1 hour
+      maxAge: 60 * 60 * 1000,
     });
-
     response.json({
       success: true,
       message: "Login successful!",
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        fullName: user.fullName,
-      },
     });
   } catch (error) {
     const customError = new Error("Server Error");
@@ -93,4 +91,15 @@ async function login(request, response, next) {
   }
 }
 
-export { createAccount, login };
+async function logout(request, response, next) {
+  const isProd = process.env.NODE_ENV === "production";
+  response.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: isProd,
+    samesite: isProd ? "none" : "lax",
+    path: "/",
+  });
+  response.json({ success: true, message: "Logged out successfully" });
+}
+
+export { createAccount, login, logout };

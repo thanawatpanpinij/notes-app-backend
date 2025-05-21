@@ -74,7 +74,7 @@ async function login(request, response, next) {
     response.cookie("accessToken", token, {
       httpOnly: true,
       secure: isProd,
-      samesite: isProd ? "none" : "lax",
+      sameSite: isProd ? "none" : "lax",
       path: "/",
       maxAge: 60 * 60 * 1000,
     });
@@ -96,7 +96,7 @@ async function logout(request, response, next) {
   response.clearCookie("accessToken", {
     httpOnly: true,
     secure: isProd,
-    samesite: isProd ? "none" : "lax",
+    sameSite: isProd ? "none" : "lax",
     path: "/",
   });
   response.json({ success: true, message: "Logged out successfully" });

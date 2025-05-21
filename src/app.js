@@ -11,7 +11,7 @@ const app = express();
 
 app.use(helmet());
 const corsOptions = {
-  origin: ["http://localhost:5173"],
+  origin: ["http://localhost:5173", "https://notura-app-frontend.vercel.app/"],
   credentials: true,
 };
 app.use(cors(corsOptions));

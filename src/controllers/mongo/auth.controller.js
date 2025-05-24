@@ -54,9 +54,9 @@ async function login(request, response, next) {
     }
     const user = await authService.findUserEmail({ email });
     if (!user) {
-      return response.status(401).json({
+      return response.status(404).json({
         success: false,
-        message: "Invalid credentials",
+        message: "User not found",
       });
     }
 
